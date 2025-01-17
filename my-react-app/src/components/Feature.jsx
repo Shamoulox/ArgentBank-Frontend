@@ -1,4 +1,5 @@
 
+import PropTypes from 'prop-types';
 
 const Feature = ({ imgSrc, imgAlt, title, description }) => {
   return (
@@ -8,6 +9,13 @@ const Feature = ({ imgSrc, imgAlt, title, description }) => {
       <p>{description}</p>
     </div>
   );
+};
+
+Feature.propTypes = {
+  imgSrc: PropTypes.string.isRequired,
+  imgAlt: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
 };
 
 export default Feature;
