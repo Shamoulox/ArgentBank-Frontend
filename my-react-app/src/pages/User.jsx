@@ -1,10 +1,24 @@
 import Footer from '../components/Footer';
-import NavBar from '../components/Navbar';
+import NavBar from '../components/NavBar';
 import Account from '../components/Account';
+import { useState, useEffect } from 'react'; 
+
 import '../styles/main.css';
 
 
 function User() {
+  const [user, setUser] = useState(null); // L'état de l'utilisateur
+  
+  // Vérifier si un utilisateur est connecté au chargement
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userEmail = localStorage.getItem('userEmail');
+    if (token && userEmail) {
+      setUser({ name: userEmail }); // Remplace par le nom réel de l'utilisateur si disponible
+    }
+  }, []);
+
+  
   const accounts = [
     {
       title: "Argent Bank Checking (x8349)",
@@ -28,7 +42,7 @@ function User() {
       <NavBar />
       <main className="main bg-dark">
         <div className="header">
-          <h1>Welcome back<br />Tony Jarvis!</h1>
+          <h1>Welcome back<br />{user ? user.name : 'Guest'}!</h1>
           <button className="edit-button">Edit Name</button>
         </div>
         <h2 className="sr-only">Accounts</h2>

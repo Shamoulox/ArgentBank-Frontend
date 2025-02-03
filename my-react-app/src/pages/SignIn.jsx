@@ -29,14 +29,23 @@ function SignIn() {
           password: formData.password
         })
       });
-
+      
       const data = await response.json();
       console.log('réponse API: ', data);
 
       if (response.ok) {
-        // Stockage du token dans le localStorage
+        // Stocker le token dans le localStorage
         console.log('connexion réussie token', data.body.token);
         localStorage.setItem('token', data.body.token);
+        localStorage.setItem('userName', data.body.userName); 
+        // S'Assurez- le nom de l'utilisateur est disponible dans la réponse
+
+        // Stocker l'email si "Remember me" est coché
+        if (formData.rememberMe) {
+          localStorage.setItem('userEmail', formData.email);
+        } else {
+          localStorage.removeItem('userEmail');
+        }
         
         // Redirection vers la page user
         navigate('/user');
@@ -51,12 +60,15 @@ function SignIn() {
 
   const updateFormField = (e) => {
     const { id, value, type, checked } = e.target;
+    console.log(checked, id)
     setFormData(prev => ({
       ...prev,
       [id]: type === 'checkbox' ? checked : value
     }));
   };
 
+  
+console.log('formData', formData)
   return (
     <>
       <NavBar />
@@ -87,11 +99,11 @@ function SignIn() {
             <div className="input-remember">
               <input
                 type="checkbox"
-                id="remember-me"
+                id="rememberMe"
                 checked={formData.rememberMe}
                 onChange={updateFormField}
               />
-              <label htmlFor="remember-me">Remember me</label>
+              <label htmlFor="rememberMe">Remember me</label>
             </div>
             <button type="submit" className="sign-in-button">
               Sign In

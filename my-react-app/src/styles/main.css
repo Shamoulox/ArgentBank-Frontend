@@ -19,6 +19,8 @@ body {
 
 .bg-dark {
   background-color: #12002b;
+  min-height: 1000px; 
+  align-content: center;
 }
 
 .sr-only {
@@ -180,10 +182,19 @@ body {
 
 .input-remember {
   display: flex;
+  align-items: center;
+}
+
+.input-remember input [type="checkbox" ] {
+  margin-right: 10px;
+  color: #00bc77;
 }
 
 .input-remember label {
   margin-left: 0.25rem;
+  margin-right: 10px;
+  cursor:pointer;
+  
 }
 
 .input-wrapper {

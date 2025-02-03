@@ -1,5 +1,5 @@
 
-import NavBar from "../components/Navbar";
+import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import Feature from "../components/Feature";
 import '../styles/main.css';
@@ -21,10 +21,10 @@ function Home() {
         </div>
         <section className="features">
         <Feature
-        imgSrc={"/img/icon-chat.png"}
-        imgAlt={"Chat Icon"}
-        title={"You are our #1 priority"}
-        description={"Need to talk to a representative? You can get in touch through our 24/7 chat or through a phone call in less than 5 minutes."}
+        imgSrc="/img/icon-chat.png"
+        imgAlt="Chat Icon"
+        title="You are our #1 priority"
+        description="Need to talk to a representative? You can get in touch through our 24/7 chat or through a phone call in less than 5 minutes."
         />
         <Feature
         imgSrc={"/img/icon-money.png"}
