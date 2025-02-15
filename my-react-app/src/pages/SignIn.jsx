@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/Navbar";
@@ -67,8 +66,6 @@ function SignIn() {
     }));
   };
 
-  
-console.log('formData', formData)
   return (
     <>
       <NavBar />
