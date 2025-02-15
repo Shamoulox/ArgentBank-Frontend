@@ -1,22 +1,41 @@
 import Footer from '../components/Footer';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/Navbar';
 import Account from '../components/Account';
-import { useState, useEffect } from 'react'; 
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 import '../styles/main.css';
 
-
 function User() {
-  const [user, setUser] = useState(null); // L'état de l'utilisateur
+  
+  const navigate = useNavigate(); // redirection après connexion 
+  const token = useSelector((state) => state.auth.token); // Récupération du token dans le store redux
+  console.log("token récupéré depuis redux",token);
+  const profiles = useSelector((state) => state.auth.profiles);
+  console.log ("userprofil redux Récupéré", profiles) // Récupération du profil utilisateur dans le store redux
+  const [username, setUsername] = useState(""); // Stocker le nom de l'utilisateur
+
   
   // Vérifier si un utilisateur est connecté au chargement
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userEmail = localStorage.getItem('userEmail');
-    if (token && userEmail) {
-      setUser({ name: userEmail }); // Remplace par le nom réel de l'utilisateur si disponible
+   
+    if (token === null) {
+      console.log("Utilisateur non connecté userpage");
+      navigate("/signin"); // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    } else { 
+      console.log("Utilisateur connecté");
+      setUsername(localStorage.getItem("userName")); // Récupérer le nom de l'utilisateur dans le localStorage
+      
+      
     }
-  }, []);
+  }, [token, navigate]);
+
+  // Fonction pour gérer la déconnexion
+  // const handleLogout = () => {
+  //   dispatch(logout()); // Déclenche l'action logout redux
+  //   navigate("/signin"); // Redirige vers la page de connexion
+  // };
 
   
   const accounts = [
@@ -42,23 +61,19 @@ function User() {
       <NavBar />
       <main className="main bg-dark">
         <div className="header">
-          <h1>Welcome back<br />{user ? user.name : 'Guest'}!</h1>
+           {/* Ajout du bouton du nom utilisteur */}
+          <h1>Welcome back, {profiles?.name || username}!</h1> 
           <button className="edit-button">Edit Name</button>
         </div>
         <h2 className="sr-only">Accounts</h2>
-        
         {accounts.map((account, index) => (
-          <Account
-            key={index}
-            title={account.title}
-            amount={account.amount}
-            description={account.description}
-          />
+          <Account key={index} title={account.title} amount={account.amount} description={account.description} />
         ))}
       </main>
       <Footer />
     </>
   );
 }
+
 
 export default User;

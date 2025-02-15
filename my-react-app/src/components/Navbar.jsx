@@ -1,26 +1,30 @@
 // NavBar.jsx
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect} from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, UserProfiles } from "../redux/features/authSlice";
+
 
 const NavBar = () => {
-  const [userName, setUserName] = useState('');
+  
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const token = useSelector((state) => state.auth.token);
+  const profiles = useSelector((state) => state.auth.profiles);
 
   useEffect(() => {
-    const storedUserName = localStorage.getItem('userName');
-    if (storedUserName) {
-      setUserName(storedUserName);
-    }
-  }, []);
+    if (token) dispatch(UserProfiles(token));
+  }, [token, dispatch]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userEmail');
-    setUserName('');
-    navigate('/signin');
+    dispatch(logout());
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    
+    navigate("/");
   };
-
+console.log("action Profiles", profiles)
   return (
     <nav className="main-nav">
       <Link className="main-nav-logo" to="/">
@@ -32,17 +36,18 @@ const NavBar = () => {
         <h1 className="sr-only">Argent Bank</h1>
       </Link>
       <div>
-        {userName ? (
+        {profiles && profiles.name ? (
           <>
             {/* Afficher le nom de l'utilisateur et le bouton de déconnexion */}
             <Link className="main-nav-item" to="/user">
               <i className="fa fa-user-circle"></i>
-              {userName}
+              {profiles?.name}
             </Link>
-            <a className="main-nav-item" href="#" onClick={handleLogout}>
+            {/**afficher le bouton de déconnection si l'utilisateur est connecté */}
+            <Link className="main-nav-item" href="/home" onClick={handleLogout}>
               <i className="fa fa-sign-out"></i>
               Sign Out
-            </a>
+            </Link>
           </>
         ) : (
           // Si l'utilisateur n'est pas connecté, afficher le lien pour se connecter
@@ -52,6 +57,7 @@ const NavBar = () => {
           </Link>
         )}
       </div>
+      
     </nav>
   );
 };

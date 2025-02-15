@@ -1,68 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { UserLogin } from "../redux/features/authSlice"; //  Import de l'action Redux pour la connexion
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/Navbar";
 import Footer from "../components/Footer";
-import '../styles/main.css';
+import "../styles/main.css";
+
 
 function SignIn() {
+  //  useState pour stocker les valeurs du formulaire (email, mot de passe, rememberMe)
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false
+    email: "",
+    password: "",
+    rememberMe: false,
   });
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  // --------------------------------------Redux--------------------------------------
+  const [error, setError] = useState(""); //  Stocke les messages d'erreur
+  const dispatch = useDispatch(); //  Permet d'envoyer des actions Redux
+  const navigate = useNavigate(); //  Permet la redirection après connexion
 
-  const submitLoginForm = async (e) => {
-    e.preventDefault();
-    setError('');
+  // Récupération des états Redux : , error (message d'erreur), token
+  const { token } = useSelector((state) => state.auth);
 
-    try {
-      const response = await fetch('http://localhost:3001/api/v1/user/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        })
-      });
-      
-      const data = await response.json();
-      console.log('réponse API: ', data);
-
-      if (response.ok) {
-        // Stocker le token dans le localStorage
-        console.log('connexion réussie token', data.body.token);
-        localStorage.setItem('token', data.body.token);
-        localStorage.setItem('userName', data.body.userName); 
-        // S'Assurez- le nom de l'utilisateur est disponible dans la réponse
-
-        // Stocker l'email si "Remember me" est coché
-        if (formData.rememberMe) {
-          localStorage.setItem('userEmail', formData.email);
-        } else {
-          localStorage.removeItem('userEmail');
-        }
-        
-        // Redirection vers la page user
-        navigate('/user');
-      } else {
-        setError(data.message || 'Erreur pendant la connexion');
-      }
-      } catch (error) {
-        console.error(error);
-        setError('Les identifiants sont incorrects');
+  // redirigé l'utilisateur vers la page User s'il est déjà connecté si un token est present
+   useEffect(() => {
+    if (token) {
+      navigate("/User");
     }
-  }
+     }, [token, navigate]);
 
+
+  //  Fonction appelée lors du clic sur "Sign In"
+  const submitLoginForm = async (e) => {
+    e.preventDefault(); // Empêche le rechargement de la page
+
+    dispatch(UserLogin(formData)) // Envoie de l'action Userlogin Redux pour l'authentification
+      .unwrap() //  convertit la réponse en promesse JS
+      .then(() => {
+        // Stockage de l'email si "Remember me" est coché
+        if (formData.rememberMe) {
+          localStorage.setItem("userEmail", formData.email);
+        } else {
+          localStorage.removeItem("userEmail");
+        }
+        navigate("/User"); //  Redirection vers la page user après connexion réussie
+        console.log("Connexion Userpage");
+      })
+      .catch((err) => {
+        console.error("Erreur de connexion :", err); // Afficher erreur si l'authentification échoue
+       setError(err); // Stocker le message d'erreur dans le state
+      });
+  };
+
+  // Met à jour les valeurs du formulaire à chaque modification d'un champ en copiant les valeurs précédentes.
   const updateFormField = (e) => {
     const { id, value, type, checked } = e.target;
-    console.log(checked, id)
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [id]: type === 'checkbox' ? checked : value
+      [id]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -74,6 +69,7 @@ function SignIn() {
           <i className="fa fa-user-circle sign-in-icon"></i>
           <h1>Sign In</h1>
           {error && <p className="error-message">{error}</p>}
+
           <form onSubmit={submitLoginForm}>
             <div className="input-wrapper">
               <label htmlFor="email">Email</label>
@@ -82,6 +78,8 @@ function SignIn() {
                 id="email"
                 value={formData.email}
                 onChange={updateFormField}
+                autoComplete="email"
+                aria-label="Email"
               />
             </div>
             <div className="input-wrapper">
@@ -91,6 +89,8 @@ function SignIn() {
                 id="password"
                 value={formData.password}
                 onChange={updateFormField}
+                autoComplete="current-password"
+                aria-label="Password"
               />
             </div>
             <div className="input-remember">
@@ -103,7 +103,7 @@ function SignIn() {
               <label htmlFor="rememberMe">Remember me</label>
             </div>
             <button type="submit" className="sign-in-button">
-              Sign In
+              {"Sign In"}
             </button>
           </form>
         </section>

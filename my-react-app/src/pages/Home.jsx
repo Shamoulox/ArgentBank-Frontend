@@ -1,5 +1,5 @@
 
-import NavBar from "../components/NavBar";
+import NavBar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Feature from "../components/Feature";
 import '../styles/main.css';
