@@ -1,65 +1,82 @@
 // NavBar.jsx
 import { useEffect} from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, UserProfiles } from "../redux/features/authSlice";
+
 
 
 const NavBar = () => {
   
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const token = useSelector((state) => state.auth.token);
+  const location = useLocation();
+  const dispatch = useDispatch();  
   const profiles = useSelector((state) => state.auth.profiles);
 
   useEffect(() => {
-    if (token) dispatch(UserProfiles(token));
-  }, [token, dispatch]);
+    const storedToken = sessionStorage.getItem("token");
+    if (!storedToken) {
+      navigate("/signin");
+    } else {
+      console.log("useeffect token", storedToken);
+       dispatch(UserProfiles(storedToken));
+    }
+  }, [dispatch, navigate]);
 
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userEmail");
-    
+    sessionStorage.removeItem("userName");
+    sessionStorage.removeItem("userEmail");
     navigate("/");
   };
-console.log("action Profiles", profiles)
-  return (
-    <nav className="main-nav">
-      <Link className="main-nav-logo" to="/">
-        <img
-          className="main-nav-logo-image"
-          src="/img/argentBankLogo.png"
-          alt="Argent Bank Logo"
-        />
-        <h1 className="sr-only">Argent Bank</h1>
-      </Link>
+
+const handleLogoClick = () => {
+  navigate("/");
+};
+
+
+const token = sessionStorage.getItem("token");
+
+
+console.log("action Profiles", profiles);
+return (
+  <nav className="main-nav">
+    <Link className="main-nav-logo" to="/" onClick={handleLogoClick}>
+      <img
+        className="main-nav-logo-image"
+        src="/img/argentBankLogo.png"
+        alt="Argent Bank Logo"
+      />
+      <h1 className="sr-only">Argent Bank</h1>
+    </Link>
+    <div>
+      {/* Afficher le lien pour se connecter sur toutes les pages */}
       <div>
-        {profiles && profiles.name ? (
-          <>
-            {/* Afficher le nom de l'utilisateur et le bouton de déconnexion */}
+        <Link className="main-nav-item" to="/signin">
+          <i className="fa fa-user-circle"></i>
+          Sign In
+        </Link>
+      </div>
+      {/* Afficher le bouton de déconnexion uniquement sur la page /user */}
+      {location.pathname === "/user" && token && (
+        <div>
+          {
             <Link className="main-nav-item" to="/user">
               <i className="fa fa-user-circle"></i>
               {profiles?.name}
             </Link>
-            {/**afficher le bouton de déconnection si l'utilisateur est connecté */}
-            <Link className="main-nav-item" href="/home" onClick={handleLogout}>
-              <i className="fa fa-sign-out"></i>
-              Sign Out
-            </Link>
-          </>
-        ) : (
-          // Si l'utilisateur n'est pas connecté, afficher le lien pour se connecter
-          <Link className="main-nav-item" to="/signin">
-            <i className="fa fa-user-circle"></i>
-            Sign In
-          </Link>
-        )}
-      </div>
-      
-    </nav>
-  );
+          }
+          <a className="main-nav-item" href="#" onClick={handleLogout}>
+            <i className="fa fa-sign-out"></i>
+            Sign Out
+          </a>
+        </div>
+      )}
+    </div>
+  </nav>
+);
 };
 
 export default NavBar;
+
+

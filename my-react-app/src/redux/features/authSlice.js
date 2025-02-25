@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
-  token:null,
+  token: sessionStorage.getItem("token") || null,
   error: null,
   profiles: null,
+  
 };
 
 // ---------- Créer une action asynchrone pour la connexion de l'utilisateur Fetch API ----------
@@ -21,7 +22,8 @@ export const UserLogin = createAsyncThunk(
             const result = await response.json();
             console.log("réponse de l'api token", result); // Vérifier la structure de la réponse
             if (response.ok) {
-                return result; // Retourne le token reçu du serveur pour le stocker dans redux
+              sessionStorage.setItem("token", result.body.token);
+              return result // // Retourne le token reçu du serveur pour le stocker dans redux
             } else {
                 // Retourner un message d'erreur si la requête a échoué
                 return rejectWithValue((result.message || "Problème de connexion")
@@ -51,8 +53,8 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(UserLogin.fulfilled, (state, action) => {
-        console.log("userProfiles fullfilled", action.payload);
-        state.token = action.payload.token;
+        console.log("userLogin fullfilled", action.payload);
+        state.token = action.payload.body.token;
         
       })
       .addCase(UserLogin.rejected, (state, action) => {
@@ -78,6 +80,7 @@ async (data, {rejectWithValue}) => {
     const result = await response.json();
     console.log("réponse de l'api UserUpdate", result); // Vérifier la structure de la réponse
     if (response.ok) {
+      
       return result;
     } else {
       // Retourner un message d'erreur si la requête a échoué
@@ -92,13 +95,13 @@ async (data, {rejectWithValue}) => {
 
 
 // --------- Créer un une action asynch pour récupérer les profils utilisateurs (get)----------
-
+// bonne pratiquer à rechercher ou stocker le token jwt ( pas ds redux car chaque que l'on rechargera il disparaitra)
 export const UserProfiles = createAsyncThunk(
   "auth/profiles",
   async (data, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/v1/user/profiles",
+        "http://localhost:3001/api/v1/user/profile",
         {
           method: "GET",
           headers: {
@@ -120,18 +123,6 @@ export const UserProfiles = createAsyncThunk(
     }
   }
 );
-
-
-
-
-
-
-
-
-
-
-
-
 
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;

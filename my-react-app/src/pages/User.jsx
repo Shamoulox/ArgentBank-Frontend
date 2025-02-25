@@ -10,8 +10,6 @@ import '../styles/main.css';
 function User() {
   
   const navigate = useNavigate(); // redirection après connexion 
-  const token = useSelector((state) => state.auth.token); // Récupération du token dans le store redux
-  console.log("token récupéré depuis redux",token);
   const profiles = useSelector((state) => state.auth.profiles);
   console.log ("userprofil redux Récupéré", profiles) // Récupération du profil utilisateur dans le store redux
   const [username, setUsername] = useState(""); // Stocker le nom de l'utilisateur
@@ -19,17 +17,18 @@ function User() {
   
   // Vérifier si un utilisateur est connecté au chargement
   useEffect(() => {
-   
-    if (token === null) {
+   const token = sessionStorage.getItem("token"); // Récupérer le token dans le sessionStorage     
+    if (!token) { 
+    
       console.log("Utilisateur non connecté userpage");
       navigate("/signin"); // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
     } else { 
       console.log("Utilisateur connecté");
-      setUsername(localStorage.getItem("userName")); // Récupérer le nom de l'utilisateur dans le localStorage
+      setUsername(sessionStorage.getItem("userName")); // Récupérer le nom de l'utilisateur dans le localStorage
       
       
     }
-  }, [token, navigate]);
+  }, [navigate]);
 
   // Fonction pour gérer la déconnexion
   // const handleLogout = () => {
