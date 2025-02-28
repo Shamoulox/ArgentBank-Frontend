@@ -18,7 +18,7 @@ export const UserLogin = createAsyncThunk(
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(data),
-            });
+            })
             const result = await response.json();
             console.log("réponse de l'api token", result); // Vérifier la structure de la réponse
             if (response.ok) {
@@ -36,32 +36,8 @@ export const UserLogin = createAsyncThunk(
     }
 );
 
-// --------- Créer un slice pour gérer l'authentification----------
-const authSlice = createSlice({
-  name: "auth",
-  initialState,
-  reducers: {
-    logout: (state) => {
-      state.token = null;
-      // Supprimer le token du sessionStorage
-      sessionStorage.removeItem("token");
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(UserLogin.pending, (state) => {
-        state.error = null;
-      })
-      .addCase(UserLogin.fulfilled, (state, action) => {
-        console.log("userLogin fullfilled", action.payload);
-        state.token = action.payload.body.token;
-        
-      })
-      .addCase(UserLogin.rejected, (state, action) => {
-        state.error = action.payload || "Erreur inconnue";
-      });
-  },
-});
+
+
 
 // --------- Créer une action asynchrone pour récupérer les données UserProfil (Put) ----------
 
@@ -123,6 +99,40 @@ export const UserProfiles = createAsyncThunk(
     }
   }
 );
+
+// --------- Créer un slice pour gérer l'authentification----------
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    logout: (state) => {
+      state.token = null;
+      state.profiles = null;
+      // Supprimer le token du sessionStorage
+      sessionStorage.removeItem("token");
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(UserLogin.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(UserLogin.fulfilled, (state, action) => {
+        console.log("userLogin fullfilled", action.payload);
+        state.token = action.payload.body.token;
+      })
+      .addCase(UserLogin.rejected, (state, action) => {
+        state.error = action.payload || "Erreur inconnue";
+      })
+      .addCase(UserProfiles.fulfilled, (state, action) => {
+        console.log("userProfiles fullfilled", action.payload);
+        state.profiles = action.payload.body;
+      })
+      .addCase(UserProfiles.rejected, (state, action) => {
+        state.error = action.payload || "Erreur inconnue";
+      });
+  },
+});
 
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;
