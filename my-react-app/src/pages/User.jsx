@@ -74,12 +74,17 @@ function User() {
       <NavBar />
       <main className="main bg-dark">
         <div className="header">
+          {isEditing ? (
+            <h1>Edit User info</h1>
+          ) : (
           <h1>
             Welcome back, {profiles?.firstName} {profiles?.lastName}!
           </h1>
+          )}
           {isEditing ? (
-            <form onSubmit={handleSubmit}>
-              <div>
+            <form className="form" onSubmit={handleSubmit}>
+              <div className="form-label-input__wrapper">
+              <div className="form-label-input">
                 <label htmlFor="username">Username:</label>
                 <input
                   type="text"
@@ -88,10 +93,32 @@ function User() {
                   onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
-              <button type="submit">Save</button>
-              <button type="button" onClick={() => setIsEditing(false)}>
+              <div className="form-label-input">
+                <label htmlFor="firstname">First Name:</label>
+                <input
+                  type="text"
+                  id="firstname"
+                  value={profiles?.firstName || ""}
+                  disabled
+                />
+              </div>
+              <div className="form-label-input">
+                <label htmlFor="username">Last Name:</label>
+                <input
+                  type="text"
+                  id="lastname"
+                  value={profiles?.lastName || ""}
+                  disabled
+                  
+                />
+                </div>
+              </div>
+              <div className="form-buttons">
+              <button className="formbutton" type="submit">Save</button>
+              <button className="formbutton" type="button" onClick={() => setIsEditing(false)}>
                 Cancel
               </button>
+              </div>
             </form>
           ) : (
             <button className="edit-button" onClick={() => setIsEditing(true)}>
