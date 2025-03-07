@@ -12,6 +12,7 @@ const NavBar = () => {
   const location = useLocation();
   const dispatch = useDispatch();  
   const profiles = useSelector((state) => state.auth.profiles);
+  
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("token");
@@ -32,7 +33,7 @@ const NavBar = () => {
   };
 
 const handleLogoClick = () => {
-  handleLogout();
+  
   navigate("/");
 };
 
@@ -46,7 +47,7 @@ return (
     <Link className="main-nav-logo" to="/" onClick={handleLogoClick}>
       <img
         className="main-nav-logo-image"
-        src="/img/argentBankLogo.png"
+        src="/img/argentBankLogo.webp"
         alt="Argent Bank Logo"
       />
       <h1 className="sr-only">Argent Bank</h1>
@@ -55,10 +56,10 @@ return (
       {/* Afficher le nom de l'utilisateur s'il est connecté */}
       {isLoggedIn ? (
         <div>
-          {profiles && profiles.firstName && (
+          {profiles && profiles.userName && (
             <Link className="main-nav-item" to="/user">
               <i className="fa fa-user-circle"></i>
-              {profiles.firstName} 
+              {profiles.userName} 
             </Link>
           )}
           <a className="main-nav-item" href="#" onClick={handleLogout}>

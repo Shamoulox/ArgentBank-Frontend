@@ -13,13 +13,17 @@ body {
   min-height: 100vh;
 }
 
+.fa {
+  margin:0.3rem}
+
+
 .main {
   flex: 1;
 }
 
 .bg-dark {
   background-color: #12002b;
-  min-height: 1000px; 
+  min-height: 84vh; 
   align-content: center;
 }
 
@@ -70,14 +74,15 @@ body {
 .main-nav-logo-image {
   max-width: 100%;
   width: 200px;
+  height: auto;
 }
 
 .hero {
-  background-image: url('../img/bank-tree.jpeg');
-  background-position: 0 -50px;
+  background-image: url('../img/bank-tree.webp');
+  background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  height: 300px;
+  height: 45vh;
   position: relative;
 }
 
@@ -104,8 +109,12 @@ body {
 
 @media (min-width: 920px) {
   .hero {
-    height: 400px;
-    background-position: 0% 33%;
+    height: 45vh;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    width: 100%;
   }
 
   .hero-content {
@@ -133,6 +142,9 @@ body {
 @media (min-width: 920px) {
   .features {
     flex-direction: row;
+    display: flex;
+    align-items: center;
+    min-height: 42vh;
   }
 }
 

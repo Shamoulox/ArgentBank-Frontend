@@ -39,36 +39,33 @@ export const UserLogin = createAsyncThunk(
 
 
 
-// --------- Créer une action asynchrone pour récupérer les données UserProfil (Put) ----------
+// --------- Créer une action asynchrone pour modifier les données UserProfil (Put) ----------
 
-export const UserUpdate = createAsyncThunk (
-'auth/UserUpdate',
-async (data, {rejectWithValue}) => {
-  try {
-    const response = await fetch("http://localhost:3001/api/v1/user/update", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${data.token}`,
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await response.json();
-    console.log("réponse de l'api UserUpdate", result); // Vérifier la structure de la réponse
-    if (response.ok) {
+export const UserUpdate = createAsyncThunk(
+  'auth/UserUpdate',
+  async ({ token, userName }, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3001/api/v1/user/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userName }),
+      });
+      const result = await response.json();
+      console.log("réponse de l'api UserUpdate lors de la mise à jour", result);
       
-      return result;
-    } else {
-      // Retourner un message d'erreur si la requête a échoué
-      return rejectWithValue("Pb Récupération Réseau UserUpdate" + result.message);
+      if (response.ok) {
+        return result;
+      } else {
+        return rejectWithValue("Pb de la mise à jour" + result.message);
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
-  } catch (error) {
-    return rejectWithValue(error.message);
   }
-}
-
 );
-
 
 // --------- Créer un une action asynch pour récupérer les profils utilisateurs (get)----------
 // bonne pratiquer à rechercher ou stocker le token jwt ( pas ds redux car chaque que l'on rechargera il disparaitra)
@@ -100,7 +97,7 @@ export const UserProfiles = createAsyncThunk(
   }
 );
 
-// --------- Créer un slice pour gérer l'authentification----------
+// Créer un slice pour gérer l'authentification
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -108,7 +105,6 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.profiles = null;
-      // Supprimer le token du sessionStorage
       sessionStorage.removeItem("token");
     },
   },
@@ -129,6 +125,12 @@ const authSlice = createSlice({
         state.profiles = action.payload.body;
       })
       .addCase(UserProfiles.rejected, (state, action) => {
+        state.error = action.payload || "Erreur inconnue";
+      })
+      .addCase(UserUpdate.fulfilled, (state, action) => {
+        state.profiles = action.payload.body;
+      })
+      .addCase(UserUpdate.rejected, (state, action) => {
         state.error = action.payload || "Erreur inconnue";
       });
   },
