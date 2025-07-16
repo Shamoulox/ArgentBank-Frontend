@@ -345,8 +345,35 @@ body {
   margin-bottom: 1rem;
 }
 
-.form-label-input__wrapper .form-label-input input{
+.form-label-input__wrapper .form-label-input input {
   height: 25px;
+}
+
+/* error css*/
+
+.error-content {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.error-title {
+  font-size: 6rem;
+  font-weight: bold;
+  color: #ff0000;
+}
+
+.error-subtitle {
+  font-size: 1.5rem;
+  margin-top: 20px;
+  color: #333;
+}
+
+.error-text {
+  font-size: 1rem;
+  margin-top: 20px;
+  color: #00bc77;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 @media (min-width: 720px) {

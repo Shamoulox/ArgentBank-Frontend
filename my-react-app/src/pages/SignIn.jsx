@@ -6,53 +6,50 @@ import NavBar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../styles/main.css";
 
-
+// === Composant SignIn ===
 function SignIn() {
-  //  useState pour stocker les valeurs du formulaire (email, mot de passe, rememberMe)
+  // --- États locaux ---
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     rememberMe: false,
   });
-  // --------------------------------------Redux--------------------------------------
+
+  // --- Hooks Redux & Navigation ---
   const [error, setError] = useState(""); //  Stocke les messages d'erreur
   const dispatch = useDispatch(); //  Permet d'envoyer des actions Redux
-  const navigate = useNavigate(); //  Permet la redirection après connexion
-
-  // Récupération des états Redux : , error (message d'erreur), token
+  const navigate = useNavigate(); //  Permet de naviguer entre les pages
   const { token } = useSelector((state) => state.auth);
 
-  // redirigé l'utilisateur vers la page User s'il est déjà connecté si un token est present
-   useEffect(() => {
+  // --- Redirection si déjà connecté (token présent)---
+  useEffect(() => {
     if (token) {
       navigate("/User");
     }
-     }, [token, navigate]);
+  }, [token, navigate]);
 
-
-  //  Fonction appelée lors du clic sur "Sign In"
+  // --- Soumission du formulaire de connexion ---
   const submitLoginForm = async (e) => {
-    e.preventDefault(); // Empêche le rechargement de la page
-
-    dispatch(UserLogin(formData)) // Envoie de l'action Userlogin Redux pour l'authentification
-      .unwrap() //  convertit la réponse en promesse JS
+    // Empêche le rechargement de la page
+    e.preventDefault();
+    dispatch(UserLogin(formData))
+      .unwrap()
       .then(() => {
-        // Stockage de l'email si "Remember me" est coché
         if (formData.rememberMe) {
           localStorage.setItem("userEmail", formData.email);
         } else {
           localStorage.removeItem("userEmail");
         }
-        navigate("/User"); //  Redirection vers la page user après connexion réussie
+        navigate("/User");
         console.log("Connexion Userpage");
       })
       .catch((err) => {
-        console.error("Erreur de connexion :", err); // Afficher erreur si l'authentification échoue
-       setError(err); // Stocker le message d'erreur dans le state
+        console.error("Erreur de connexion :", err);
+        setError(err);
       });
   };
 
-  // Met à jour les valeurs du formulaire à chaque modification d'un champ en copiant les valeurs précédentes.
+  // --- Mise à jour des champs du formulaire ---
   const updateFormField = (e) => {
     const { id, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -61,6 +58,7 @@ function SignIn() {
     }));
   };
 
+  // --- Rendu JSX ---
   return (
     <>
       <NavBar />

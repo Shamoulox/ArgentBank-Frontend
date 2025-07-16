@@ -1,5 +1,4 @@
-
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const Feature = ({ imgSrc, imgAlt, title, description }) => {
   return (

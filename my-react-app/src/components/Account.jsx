@@ -1,5 +1,4 @@
-
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const Account = ({ title, amount, description }) => {
   return (
@@ -20,6 +19,5 @@ Account.propTypes = {
   amount: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
 };
-
 
 export default Account;
